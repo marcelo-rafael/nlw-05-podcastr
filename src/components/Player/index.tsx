@@ -13,7 +13,7 @@ export function Player() {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [progress, setProgress] = useState(0)
 
-  const { episodeList, currentEpisodeIndex, isPlaying, isShuffling, toggleShuffle, togglePLay, isLooping, toggleLoop, setPLayingState, playNext, playPrevious, hasNext, hasPrevious } = usePLayer()
+  const { episodeList, currentEpisodeIndex, isPlaying, isShuffling,clearPLayerState, toggleShuffle, togglePLay, isLooping, toggleLoop, setPLayingState, playNext, playPrevious, hasNext, hasPrevious } = usePLayer()
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -33,6 +33,19 @@ export function Player() {
     audioRef.current.addEventListener('timeupdate', () => {
       setProgress(Math.floor(audioRef.current.currentTime))
     })
+  }
+
+  function handleSeek(amount: number) {
+    audioRef.current.currentTime = amount
+    setProgress(amount)
+  }
+
+  function handleEpisodeEnded() {
+    if (hasNext) {
+      playNext()
+    } else {
+      clearPLayerState()
+    }
   }
 
   const episode = episodeList[currentEpisodeIndex]
@@ -63,6 +76,7 @@ export function Player() {
             < Slider
               max={episode.duration}
               value={progress}
+              onChange={handleSeek}
               trackStyle={{ backgroundColor: '#04d361' }}
               railStyle={{ backgroundColor: '#9f75ff' }}
               handleStyle={{ borderColor: '#04d361', borderWidth: 4 }}
@@ -76,7 +90,7 @@ export function Player() {
       </div>
 
       { episode && (
-        <audio src={episode.url} ref={audioRef} autoPlay loop={isLooping} onPlay={() => setPLayingState(true)} onPause={() => setPLayingState(false)} onLoadedMetadata={setupProgressListener}/>
+        <audio src={episode.url} ref={audioRef} onEnded={handleEpisodeEnded} autoPlay loop={isLooping} onPlay={() => setPLayingState(true)} onPause={() => setPLayingState(false)} onLoadedMetadata={setupProgressListener}/>
       ) }
 
       <div className={styles.buttons}>
