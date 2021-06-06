@@ -33,8 +33,9 @@ type PLayerContextProviderProps = {
 
 export const PlayerContext = createContext({} as PlayerContextData)
 
-export function PLayerContextProvider({children}: PLayerContextProviderProps) {
-
+export function PLayerContextProvider({
+  children
+}: PLayerContextProviderProps) {
   const [episodeList, setEpisodelist] = useState([])
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -69,17 +70,19 @@ export function PLayerContextProvider({children}: PLayerContextProviderProps) {
     setIsPlaying(state)
   }
 
-  function  clearPLayerState() {
+  function clearPLayerState() {
     setEpisodelist([])
     setCurrentEpisodeIndex(0)
   }
 
   const hasPrevious = currentEpisodeIndex > 0
-  const hasNext = isShuffling || (currentEpisodeIndex + 1) < episodeList.length
+  const hasNext = isShuffling || currentEpisodeIndex + 1 < episodeList.length
 
   function playNext() {
     if (isShuffling) {
-      const nextRandomEpisodeIndex = Math.floor(Math.random() * episodeList.length)
+      const nextRandomEpisodeIndex = Math.floor(
+        Math.random() * episodeList.length
+      )
 
       setCurrentEpisodeIndex(nextRandomEpisodeIndex)
     } else if (hasNext) {
@@ -94,9 +97,29 @@ export function PLayerContextProvider({children}: PLayerContextProviderProps) {
   }
 
   return (
-    <PlayerContext.Provider value={{ episodeList, currentEpisodeIndex, play, isPlaying, togglePLay, clearPLayerState, isLooping, isShuffling, toggleShuffle, toggleLoop, setPLayingState, playList, hasNext, hasPrevious, playPrevious, playNext }}>
+    <PlayerContext.Provider
+      value={{
+        episodeList,
+        currentEpisodeIndex,
+        play,
+        isPlaying,
+        togglePLay,
+        clearPLayerState,
+        isLooping,
+        isShuffling,
+        toggleShuffle,
+        toggleLoop,
+        setPLayingState,
+        playList,
+        hasNext,
+        hasPrevious,
+        playPrevious,
+        playNext
+      }}
+    >
       {children}
-    </PlayerContext.Provider>)
+    </PlayerContext.Provider>
+  )
 }
 
 export const usePLayer = () => {
